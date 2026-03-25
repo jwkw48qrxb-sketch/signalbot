@@ -1,1 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AetherBand // Precision Trading System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=SF+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        :root {
+            --glass-blue: #9db6e1;
+            --deep-aqua: #0A4D68;
+            --dark-bg: #0A0F1C;
+            --card-bg: rgba(10, 77, 104, 0.15);
+            --glass-border: rgba(0, 217, 255, 0.2);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --success: #00FF9C;
+            --warning: #FFB800;
+            --danger: #FF3B30;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-bg);
+            background-image: 
+                radial-gradient(at 20% 30%, rgba(0, 217, 255, 0.08) 0px, transparent 50%),
+                radial-gradient(at 80% 70%, rgba(10, 77, 104, 0.15) 0px, transparent 50%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 40px;
+            background: rgba(10, 15, 28, 0.8);
+            backdrop-filter: blur(30px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        nav .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--glass-blue);
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .nav-link:hover {
+            color: var(--glass-blue);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--glass-blue), var(--deep-aqua));
+            color: white;
+            box-shadow: 0 4px 20px rgba(0, 217, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 30px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .btn-ghost:hover {
+            background: var(--card-bg);
+            border-color: var(--glass-blue);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 120px 40px 40px;
+        }
+
+        /* Screen Sections */
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Landing Page */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(48px, 6vw, 72px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #FFFFFF, var(--glass-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 480px;
+            margin: 60px auto;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--glass-blue);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(0, 217, 255, 0.1);
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        .sidebar {
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-item {
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            background: var(--card-bg);
+            color: var(--glass-blue);
+        }
+
+        /* Chart Upload */
+        .upload-area {
+            border: 2px dashed var(--glass-border);
+            border-radius: 16px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .upload-area:hover {
+            border-color: var(--glass-blue);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* Analysis Results */
+        .tier-analysis {
+            margin-top: 32px;
+        }
+
+        .tier-card {
+            margin-bottom: 24px;
+            padding: 24px;
+        }
+
+        .tier-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .tier-badge {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .tier-public { background: rgba(0, 255, 156, 0.15); color: var(--success); }
+        .tier-core { background: rgba(0, 217, 255, 0.15); color: var(--glass-blue); }
+        .tier-quantum { background: rgba(255, 184, 0, 0.15); color: var(--warning); }
+        .tier-singularity { background: rgba(255, 59, 48, 0.15); color: var(--danger); }
+
+        .tier-content {
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .tier-content strong {
+            color: var(--text-primary);
+        }
+
+        /* Pricing Tiers */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .pricing-card {
+            position: relative;
+            padding: 32px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pricing-card.featured {
+            border: 2px solid var(--glass-blue);
+        }
+
+        .pricing-card .price {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 16px 0;
+            color: var(--glass-blue);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 24px 0;
+            flex-grow: 1;
+        }
+
+        .pricing-features li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        .pricing-features li:before {
+            content: "✓";
+            color: var(--success);
+            margin-right: 12px;
+            font-weight: 600;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid rgba(0, 217, 255, 0.2);
+            border-top-color: var(--glass-blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                position: static;
+            }
+
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="container">
+            <div class="logo">AetherBand</div>
+            <div class="nav-links">
+                <a href="#" class="nav-link" onclick="showScreen('home')">Home</a>
+                <a href="#" class="nav-link" onclick="showScreen('pricing')">Pricing</a>
+                <a href="#" class="nav-link" onclick="showScreen('login')">Login</a>
+                <a href="#" class="btn btn-primary" onclick="showScreen('signup')">Get Started</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Home Screen -->
+        <div id="home" class="screen active">
+            <div class="hero">
+                <h1>Trade with Precision</h1>
+                <p>VWAP Snapback Analysis powered by AI. Upload your chart, get instant multi-tier breakdowns from our $5M+ trading system.</p>
+                <div class="cta-group">
+                    <button class="btn btn-primary" onclick="showScreen('signup')">Start Free Trial</button>
+                    <button class="btn btn-ghost" onclick="showScreen('pricing')">View Pricing</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Screen -->
+        <div id="login" class="screen">
+            <div class="auth-container">
+                <div class="glass-card">
+                    <h2 style="margin-bottom: 32px; font-size: 28px;">Welcome Back</h2>
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px;">Login</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 24px; color: var(--text-secondary);">
+                        Don't have an account? 
+                        <a href="#" style="color: var(--glass-blue);" onclick="showScreen('signup')">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Screen -->
+        <div id="signup" class="screen">
+            <div class="auth-container">
+                <div class="glass-card">
+                    <h2 style="margin-bottom: 32px; font-size: 28px;">Create Account</h2>
+                    <form onsubmit="handleSignup(event)">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <input type="password" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Telegram Username (Optional)</label>
+                            <input type="text" class="form-control" placeholder="@username">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 24px;">Create Account</button>
+                    </form>
+                    <p style="text-align: center; margin-top: 24px; color: var(--text-secondary);">
+                        Already have an account? 
+                        <a href="#" style="color: var(--glass-blue);" onclick="showScreen('login')">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pricing Screen -->
+        <div id="pricing" class="screen">
+            <div style="text-align: center; margin-bottom: 48px;">
+                <h2 style="font-size: 42px; margin-bottom: 16px;">Choose Your Tier</h2>
+                <p style="color: var(--text-secondary); font-size: 18px;">Precision trading signals for every level</p>
+            </div>
+
+            <div class="pricing-grid">
+                <div class="glass-card pricing-card">
+                    <div class="tier-badge tier-public">Public Node</div>
+                    <div class="price">FREE</div>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">Perfect for learning the system</p>
+                    <ul class="pricing-features">
+                        <li>Delayed signals</li>
+                        <li>Market mood analysis</li>
+                        <li>Educational content</li>
+                        <li>Strategy concepts</li>
+                    </ul>
+                    <button class="btn btn-ghost" style="width: 100%;" onclick="handleSelectPlan('public')">Get Started</button>
+                </div>
+
+                <div class="glass-card pricing-card featured">
+                    <div class="tier-badge tier-core">Core Stream</div>
+                    <div class="price">$29<span style="font-size: 20px; font-weight: 400;">/mo</span></div>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">Real-time signals</p>
+                    <ul class="pricing-features">
+                        <li>Real-time VWAP signals</li>
+                        <li>Entry / TP / SL</li>
+                        <li>Daily recap</li>
+                        <li>Chart analysis</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleSelectPlan('core')">Subscribe</button>
+                </div>
+
+                <div class="glass-card pricing-card">
+                    <div class="tier-badge tier-quantum">Quantum Layer</div>
+                    <div class="price">$99<span style="font-size: 20px; font-weight: 400;">/mo</span></div>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">Advanced analysis</p>
+                    <ul class="pricing-features">
+                        <li>Multi-TP signals</li>
+                        <li>Probability metrics</li>
+                        <li>Liquidity analysis</li>
+                        <li>Pre-market outlook</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleSelectPlan('quantum')">Subscribe</button>
+                </div>
+
+                <div class="glass-card pricing-card">
+                    <div class="tier-badge tier-singularity">Singularity Vault</div>
+                    <div class="price">$399<span style="font-size: 20px; font-weight: 400;"> lifetime</span></div>
+                    <p style="color: var(--text-secondary); margin-bottom: 24px;">Elite access</p>
+                    <ul class="pricing-features">
+                        <li>Order flow analysis</li>
+                        <li>Liquidity mapping</li>
+                        <li>Complete microstructure</li>
+                        <li>Lifetime access</li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="handleSelectPlan('singularity')">Get Lifetime Access</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboard" class="screen">
+            <div class="dashboard-grid">
+                <div class="sidebar glass-card">
+                    <ul class="sidebar-menu">
+                        <li class="sidebar-item active" onclick="showDashboardSection('analyze')">📊 Analyze Chart</li>
+                        <li class="sidebar-item" onclick="showDashboardSection('history')">📋 History</li>
+                        <li class="sidebar-item" onclick="showDashboardSection('settings')">⚙️ Settings</li>
+                        <li class="sidebar-item" onclick="handleLogout()">🚪 Logout</li>
+                    </ul>
+                </div>
+
+                <div class="main-content">
+                    <!-- Analyze Section -->
+                    <div id="analyze" class="dashboard-section">
+                        <div class="glass-card">
+                            <h2 style="margin-bottom: 24px; font-size: 28px;">Chart Analysis</h2>
+                            
+                            <div class="upload-area" onclick="document.getElementById('chartUpload').click()">
+                                <div class="upload-icon">📈</div>
+                                <h3 style="margin-bottom: 8px;">Upload TradingView Screenshot</h3>
+                                <p style="color: var(--text-secondary);">Drag and drop or click to browse</p>
+                                <input type="file" id="chartUpload" accept="image/*" style="display: none;" onchange="handleChartUpload(event)">
+                            </div>
+
+                            <div id="loadingState" class="loading">
+                                <div class="spinner"></div>
+                                <p style="color: var(--text-secondary);">Analyzing chart with AI...</p>
+                            </div>
+
+                            <div id="analysisResults" class="tier-analysis"></div>
+                        </div>
+                    </div>
+
+                    <!-- History Section -->
+                    <div id="history" class="dashboard-section" style="display: none;">
+                        <div class="glass-card">
+                            <h2 style="margin-bottom: 24px; font-size: 28px;">Analysis History</h2>
+                            <p style="color: var(--text-secondary);">Your past chart analyses will appear here</p>
+                        </div>
+                    </div>
+
+                    <!-- Settings Section -->
+                    <div id="settings" class="dashboard-section" style="display: none;">
+                        <div class="glass-card">
+                            <h2 style="margin-bottom: 24px; font-size: 28px;">Settings</h2>
+                            <div class="form-group">
+                                <label>Current Plan</label>
+                                <div style="padding: 14px 16px; background: rgba(255, 255, 255, 0.05); border-radius: 12px; color: var(--glass-blue);" id="currentPlan">
+                                    Public Node (Free)
+                                </div>
+                            </div>
+                            <button class="btn btn-primary" style="margin-top: 24px;" onclick="showScreen('pricing')">Upgrade Plan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentUser = null;
+        let currentScreen = 'home';
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+            currentScreen = screenId;
+        }
+
+        function showDashboardSection(sectionId) {
+            document.querySelectorAll('.dashboard-section').forEach(s => s.style.display = 'none');
+            document.getElementById(sectionId).style.display = 'block';
+            
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            // Simulate login
+            currentUser = { email: 'user@example.com', tier: 'public' };
+            showScreen('dashboard');
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            // Simulate signup
+            currentUser = { email: 'user@example.com', tier: 'public' };
+            showScreen('dashboard');
+        }
+
+        function handleLogout() {
+            currentUser = null;
+            showScreen('home');
+        }
+
+        function handleSelectPlan(tier) {
+            if (!currentUser) {
+                showScreen('signup');
+                return;
+            }
+            
+            currentUser.tier = tier;
+            document.getElementById('currentPlan').textContent = getTierName(tier);
+            showScreen('dashboard');
+        }
+
+        function getTierName(tier) {
+            const names = {
+                'public': 'Public Node (Free)',
+                'core': 'Core Stream ($29/mo)',
+                'quantum': 'Quantum Layer ($99/mo)',
+                'singularity': 'Singularity Vault ($399 lifetime)'
+            };
+            return names[tier] || 'Public Node';
+        }
+
+        function handleChartUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Show loading
+            document.getElementById('loadingState').classList.add('active');
+            document.getElementById('analysisResults').innerHTML = '';
+
+            // Simulate AI analysis
+            setTimeout(() => {
+                document.getElementById('loadingState').classList.remove('active');
+                generateAnalysis();
+            }, 2000);
+        }
+
+        function generateAnalysis() {
+            const tier = currentUser?.tier || 'public';
+            
+            const analysis = {
+                public: `
+                    <div class="tier-card glass-card">
+                        <div class="tier-header">
+                            <div class="tier-badge tier-public">Public Node</div>
+                            <span style="color: var(--text-secondary);">BTC/USDT • 5M</span>
+                        </div>
+                        <div class="tier-content">
+                            <p><strong>Market Mood:</strong> PANIC</p>
+                            <p><strong>VWAP Position:</strong> Price 0.78% below VWAP</p>
+                            <p><strong>RSI Condition:</strong> COLD (28) — Oversold</p>
+                            <p><strong>Stretch Classification:</strong> MODERATE</p>
+                            <p><strong>Signal Hint:</strong> Potential snapback forming. Price exhausted below fair value.</p>
+                            <p style="margin-top: 16px; font-size: 14px;">Upgrade to Core Stream for exact entry/exit prices and real-time signals.</p>
+                        </div>
+                    </div>
+                `,
+                core: `
+                    <div class="tier-card glass-card">
+                        <div class="tier-header">
+                            <div class="tier-badge tier-core">Core Stream</div>
+                            <span style="color: var(--text-secondary);">BTC/USDT • 5M</span>
+                        </div>
+                        <div class="tier-content">
+                            <p><strong>Direction:</strong> LONG</p>
+                            <p><strong>Entry Zone:</strong> $42,120 - $42,180</p>
+                            <p><strong>TP:</strong> $42,480 (VWAP touch)</p>
+                            <p><strong>SL:</strong> $42,050</p>
+                            <p><strong>Risk:Reward:</strong> 1:2.4</p>
+                            <p style="margin-top: 16px;">Price stretched 0.78% below VWAP with RSI at 28. Classic snapback setup for mean reversion to fair value.</p>
+                        </div>
+                    </div>
+                `,
+                quantum: `
+                    <div class="tier-card glass-card">
+                        <div class="tier-header">
+                            <div class="tier-badge tier-quantum">Quantum Layer</div>
+                            <span style="color: var(--text-secondary);">BTC/USDT • 5M</span>
+                        </div>
+                        <div class="tier-content">
+                            <p><strong>Entry Options:</strong></p>
+                            <p>• Conservative: $42,200 (R:R 1:1.8)</p>
+                            <p>• Standard: $42,150 (R:R 1:2.4)</p>
+                            <p>• Aggressive: $42,100 (R:R 1:3.2)</p>
+                            <p style="margin-top: 16px;"><strong>Targets:</strong></p>
+                            <p>• TP1: $42,300 (Quick scalp, 50% off)</p>
+                            <p>• TP2: $42,480 (VWAP touch, 75% exit)</p>
+                            <p>• TP3: $42,650 (Extension, 25% runner)</p>
+                            <p style="margin-top: 16px;"><strong>Analysis:</strong></p>
+                            <p>VWAP Deviation: -0.78% • RSI Exhaustion: Deep at 28 • Snapback Probability: 72%</p>
+                            <p>Liquidity: Strong bids at $42k, thin asks to $42.4k</p>
+                        </div>
+                    </div>
+                `,
+                singularity: `
+                    <div class="tier-card glass-card">
+                        <div class="tier-header">
+                            <div class="tier-badge tier-singularity">Singularity Vault</div>
+                            <span style="color: var(--text-secondary);">BTC/USDT • 5M</span>
+                        </div>
+                        <div class="tier-content">
+                            <p><strong>VWAP Metrics:</strong> Deviation -0.78% • Std Dev $180 • Touch Count 14/24h</p>
+                            <p><strong>RSI Deep Dive:</strong> 28.4 • Divergence: YES (bullish) • Exhaustion 8/10</p>
+                            <p><strong>Liquidity Analysis:</strong></p>
+                            <p>• Bid Wall: $42,000 (847 BTC) • Ask Wall: $42,500 (412 BTC)</p>
+                            <p>• Imbalance: 67% buy-side absorption • Stops swept at $42,050</p>
+                            <p style="margin-top: 16px;"><strong>Order Flow:</strong> Delta -$2.3M declining • CVD: Accumulation • Large order: 127 BTC @ $42,095</p>
+                            <p style="margin-top: 16px;"><strong>Execution Plan:</strong></p>
+                            <p>1. Conservative: $42,200 (30%) R:R 1:1.8</p>
+                            <p>2. Core: $42,150 (50%) R:R 1:2.4</p>
+                            <p>3. Aggressive: $42,100 (20%) R:R 1:3.2</p>
+                            <p style="margin-top: 16px;"><strong>Success Probability: 72%</strong></p>
+                            <p>VWAP deviation optimal (+18%) • RSI exhaustion (+22%) • Liquidity support (+16%) • Trend alignment (+16%)</p>
+                            <p style="margin-top: 16px;"><strong>Why This Works:</strong> Price deviated from VWAP with extreme RSI. Selling exhausting (volume declining, delta improving). VWAP gravity effect. 72% historical win rate at this setup. Psychology: Retail panic → Smart money absorbs → Mean reversion.</p>
+                        </div>
+                    </div>
+                `
+            };
+
+            document.getElementById('analysisResults').innerHTML = analysis[tier];
+        }
+    </script>
+</body>
+</html>
